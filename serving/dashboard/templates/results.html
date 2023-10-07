@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Script Result</title>
+</head>
+<body>
+    <h1>Result:</h1>
+    <p>The players with the following steam IDs are suspected of engaging in play that breaks the Fair Play rules of Conduct:</p>
+    <ul>
+        {% for element in output.split('\n') %}
+            <li>{{ element }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
