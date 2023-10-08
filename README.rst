@@ -56,7 +56,7 @@ This will spin up a local web server. Create an account or sign in to upload a d
 Implemented Models
 ~~~~~~~~~~~~~~~~~~
 
-    In this project Deep SAD, from ICLR, 2020, for Deep Semi-Supervised Anomaly Detection has been trained to detect anomalies in processed real-world data. The library DeepOD [#Hongzuo2023Deepod]
+In this project Deep SAD, from ICLR, 2020, for Deep Semi-Supervised Anomaly Detection has been trained to detect anomalies in processed real-world data. The library DeepOD [#Hongzuo2023Deepod]
 
 
 NOTE:
