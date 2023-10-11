@@ -7,11 +7,34 @@ from awpy import DemoParser
 
 
 def write_to_json(data, filename):
+    '''
+    Write the given data to a JSON file with the given filename.
+
+    Args:
+        data: The data to be written to the file.
+        filename: The name of the file to write the data to.
+
+    Returns:
+        None
+    '''
     with open(filename, 'w') as outfile:
         json.dump(data, outfile)
 
 
 def process_demo(demo_filename, dnum, csv_dir, json_dir, in_path):
+    '''
+    Parse a demo file and save its data as CSV files and an info file.
+
+    Args:
+        demo_filename (str): The name of the demo file to parse.
+        dnum (int): The number of the demo, used to create a unique ID.
+        csv_dir (str): The directory where to save the CSV files.
+        json_dir (str): The directory where to save the JSON files.
+        in_path (str): The path where to find the demo file.
+
+    Returns:
+        None
+    '''
     file_loc = os.path.join(in_path, demo_filename)
     demo_id = f"match{dnum}"
 
@@ -40,6 +63,27 @@ def process_demo(demo_filename, dnum, csv_dir, json_dir, in_path):
 
 
 def main():
+    '''
+    Extracts data from demo files in a given directory and saves it as CSV and JSON files.
+
+    Reads configuration from a file named 'config.ini' in the same directory as this script.
+    The configuration file should contain the following sections and options:
+
+    [PATHS]
+    csv_dir, json_dir, demo_path
+
+    The 'csv_dir' and 'json_dir' directories will be created if they don't exist.
+    The 'demo_path' directory should contain one or more '.dem' or '.dem.gz' files.
+
+    For each demo file found in 'demo_path', the function calls the 'process_demo' function
+    to extract data and save it as CSV and JSON files in the 'csv_dir' and 'json_dir' directories.
+
+    If an error occurs while processing a demo file, the function prints an error message and
+    continues with the next demo file.
+
+    Returns:
+    None
+    '''
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
 

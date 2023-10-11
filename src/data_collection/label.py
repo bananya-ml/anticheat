@@ -1,5 +1,3 @@
-# Script to label player IDs based on bans
-
 import requests
 import os
 import pandas as pd
@@ -9,14 +7,32 @@ import configparser
 
 
 def save_csv(df, loc):
+    '''
+    Saves a pandas DataFrame as a CSV file in the specified location.
 
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to be saved.
+    loc (str): The directory where the CSV file will be saved.
+
+    Returns:
+    None
+    '''
     os.makedirs(loc, exist_ok=True)
 
     df.to_csv(os.path.join(loc, 'labels.csv'), index=False)
 
 
 def save_parquet(df, loc):
+    '''
+    Saves a pandas DataFrame as a Parquet file in the specified location.
 
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to save.
+    loc (str): The directory where the Parquet file will be saved.
+
+    Returns:
+    None
+    '''
     os.makedirs(loc, exist_ok=True)
 
     df.to_parquet(os.path.join(loc, 'labels.parquet'), engine='pyarrow')
@@ -28,7 +44,19 @@ def save_parquet(df, loc):
 
 
 def player_label(player_id, api_key):
+    '''
+    Retrieves the ban history of a Faceit player with the given ID.
 
+    Args:
+        player_id (str): The ID of the player to retrieve the ban history for.
+        api_key (str): The API key to use for authentication.
+
+    Returns:
+        list: A list containing the ban history of the player, as returned by the Faceit API.
+
+    Raises:
+        None.
+    '''
     # player_id = 'bf460108-a8cb-42ff-9a0a-0f1e6a6858d9' # Test player ID
     base_url = 'https://open.faceit.com/data/v4/players/{player_id}/bans?offset=0&limit=20'
     headers = {
@@ -54,14 +82,36 @@ def player_label(player_id, api_key):
 
 
 def read_player_ids(input_path):
+    '''
+    Reads a CSV file containing player IDs and returns a pandas DataFrame.
 
+    Args:
+        input_path (str): Path to the input CSV file.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing the player IDs.
+    '''
     df = pd.read_csv(input_path)
 
     return df
 
 
-if __name__ == '__main__':
+def main():
+    '''
+    Collects player labels using the Steam API and saves them to a file.
 
+    Reads player IDs from a CSV file specified in the 'labels_input' field of the
+    'PATHS' section in the 'config.ini' file. For each player ID, retrieves their
+    labels using the Steam API key specified in the 'api_key_1' field of the
+    'API_KEYS' section in the 'config.ini' file. If the player has at least one
+    label, assigns a label of 1 to their Steam ID, otherwise assigns a label of 0.
+
+    Saves the resulting DataFrame to a file specified in the 'labels_output' field
+    of the 'PATHS' section in the 'config.ini' file, in the Parquet format.
+
+    Returns:
+        None
+    '''
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
 
@@ -100,3 +150,7 @@ if __name__ == '__main__':
 
     # save_csv(df, output)
     save_parquet(df, output)
+
+
+if __name__ == "__main__":
+    main()

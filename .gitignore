@@ -1,7 +1,10 @@
 *.csv
 *.parquet
 *.json
-*.joblib
 *.pkl
 *.pyc
 *.db
+
+anticheat_env
+.vscode
+__pycache__

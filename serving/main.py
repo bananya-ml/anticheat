@@ -1,14 +1,24 @@
 from pipeline import parser
 from pipeline import preprocess
 import models.predictions
-from dashboard import app
-import json
 import sys
 import os
 
 
 def main():
+    '''
+    Runs the anti-cheat system on the input file specified as a command line argument.
+    The input file is expected to be a directory containing CSV files with data from game matches.
+    The function preprocesses the data, detects anomalies using a machine learning model, and prints
+    the IDs of any detected anomalies to the console. If no anomalies are detected, it prints a message
+    indicating that no unfair means were detected.
 
+    Args:
+        None
+
+    Returns:
+        None
+    '''
     # Extract the argument from the command line
     file_loc = sys.argv[1]
 
