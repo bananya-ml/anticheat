@@ -7,18 +7,46 @@ import pandas as pd
 
 
 def save_csv(df, loc):
+    """
+    Save a pandas DataFrame to a CSV file.
 
+    Args:
+        df (pandas.DataFrame): The DataFrame to be saved.
+        loc (str): The file path to save the CSV file to.
+
+    Returns:
+        None
+    """
     df.to_csv(loc, index=False, encoding='utf-8')
     print("File written:", loc)
 
 
 def save_txt(ids, filename):
+    '''
+    Save a list of IDs to a text file in JSON format.
+
+    Args:
+        ids (list): A list of IDs to save.
+        filename (str): The name of the file to save the IDs to.
+
+    Returns:
+        None
+    '''
     with open(filename, 'w') as file:
         json.dump(ids, file)
     print("File written:", filename)
 
 
 def extract_player_ids(data):
+    '''
+    Extracts unique player IDs and game player IDs from a nested dictionary or list of dictionaries.
+
+    Args:
+        data (list or dict): The data to extract player IDs from.
+
+    Returns:
+        tuple: A tuple containing two lists - the first list contains unique player IDs, and the second list contains unique game player IDs.
+    '''
     player_ids = set()  # Use a set to store unique player IDs
     steam_ids = set()  # Use a set to store unique game player IDs
 
@@ -41,7 +69,17 @@ def extract_player_ids(data):
 
 
 def extract_finished_match_ids(hubs):
+    '''
+    Extracts the match IDs of all finished matches from a list of hubs.
 
+    Args:
+        hubs (list): A list of hub dictionaries, each containing an 'items' key
+            with a list of match dictionaries. Each match dictionary should have
+            a 'match_id' key.
+
+    Returns:
+        list: A list of match IDs (strings) of all finished matches in the hubs.
+    '''
     match_ids = []
 
     for hub in hubs:
@@ -52,6 +90,21 @@ def extract_finished_match_ids(hubs):
 
 
 def main():
+    '''
+    Extracts match, player and steam IDs from a JSON file and saves them to text and CSV files.
+
+    Reads the input file path and output directory from a configuration file named 'config.ini'.
+    The input file should contain a list of dictionaries, each representing a match and containing
+    information about the players and their IDs. The function extracts the IDs from the matches and
+    saves them to two files: 'match_ids.txt' (containing the match IDs) and 'player_ids.csv'
+    (containing the player and steam IDs).
+
+    Raises:
+        Any exception that occurs during the execution of the function.
+
+    Returns:
+        None.
+    '''
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
 

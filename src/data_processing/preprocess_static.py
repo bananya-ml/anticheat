@@ -16,6 +16,30 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class LabelEncoderTransformer(BaseEstimator, TransformerMixin):
+    '''
+    A transformer that applies LabelEncoder to each column of a 2D array.
+
+    This transformer applies scikit-learn's LabelEncoder to each column of a 2D
+    array independently. The input array is not modified, and a new array with
+    the same shape is returned. The transformer can be used in a scikit-learn
+    pipeline to preprocess categorical features before feeding them to a model.
+
+    Parameters
+    ----------
+    None
+
+    Attributes
+    ----------
+    None
+
+    Methods
+    -------
+    fit(X, y=None)
+        Do nothing and return self.
+    transform(X)
+        Apply LabelEncoder to each column of X and return the transformed array.
+    '''
+
     def fit(self, X, y=None):
         return self
 
@@ -27,11 +51,23 @@ class LabelEncoderTransformer(BaseEstimator, TransformerMixin):
         return X_encoded
 
 
-# Function to save the merged dataframe to a csv file
-
-
 def save_csv(df, output_dir, num):
+    '''
+    Save a pandas DataFrame to a CSV file in the specified output directory.
 
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The DataFrame to be saved.
+    output_dir : str
+        The path to the directory where the CSV file will be saved.
+    num : int
+        A number to be included in the CSV file name.
+
+    Returns:
+    --------
+    None
+    '''
     # Create the directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
@@ -44,11 +80,23 @@ def save_csv(df, output_dir, num):
     print(f"Saved {output_file}")
 
 
-# Function to save the merged dataframe to a parquet file
-
-
 def save_file(df, output_dir, num):
+    '''
+    Saves a pandas DataFrame to a parquet file in the specified output directory.
 
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The DataFrame to be saved.
+    output_dir : str
+        The path to the directory where the file will be saved.
+    num : int
+        A number to be included in the file name.
+
+    Returns:
+    --------
+    None
+    '''
     # Create the directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
@@ -60,11 +108,24 @@ def save_file(df, output_dir, num):
 
     print(f"Saved {output_file}")
 
-# Function to save the merged dataframe to a pkl file (if required)
-
 
 def save_file_compressed(df, output_dir, num):
+    '''
+    Save a pandas DataFrame as a compressed pickle file.
 
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The DataFrame to be saved.
+    output_dir : str
+        The directory where the output file will be saved.
+    num : int
+        A number to be included in the output file name.
+
+    Returns:
+    --------
+    None
+    '''
     # Save as pkl zipped
     output_file = os.path.join(output_dir, f"match{num}.pkl.gz")
     with gzip.open(output_file, 'wb') as f:
@@ -73,11 +134,20 @@ def save_file_compressed(df, output_dir, num):
     print(f"Saved {output_file}")
 
 
-# Function to process the labels
-
-
 def process_labels(labels):
+    '''
+    Fill missing values in the input labels with 0 using SimpleImputer.
 
+    Parameters:
+    -----------
+    labels : pandas.DataFrame or pandas.Series
+        The input labels to be processed.
+
+    Returns:
+    --------
+    list
+        The processed labels as a list.
+    '''
     # Use the SimpleImputer() to fill missing values with 0
     imputer = SimpleImputer(strategy='constant', fill_value=0)
 
@@ -92,7 +162,18 @@ def process_labels(labels):
 
 
 def clean_features(df):
+    '''
+    Cleans the input DataFrame by performing the following operations:
+    - Merges the 'playerSteamID' and 'steamID' columns, if possible, by replacing missing values in 'steamID' with the corresponding values in 'playerSteamID'.
+    - Drops the 'playerSteamID' and 'valid_row' columns, if they exist.
+    - Drops several other columns that are not needed for further analysis.
 
+    Parameters:
+    df (pandas.DataFrame): The input DataFrame to be cleaned.
+
+    Returns:
+    pandas.DataFrame: The cleaned DataFrame.
+    '''
     # Check if 'playerSteamID' and 'steamID' columns have conflicting values
     df['valid_row'] = df['playerSteamID'].notna() & df['steamID'].notna()
 
@@ -116,7 +197,12 @@ def clean_features(df):
 
 
 def label(df, loc):
-
+    '''
+    Merge the given DataFrame `df` with the labels DataFrame found in the directory `loc`.
+    The labels DataFrame should have columns 'steamID' and 'label'.
+    The merge is performed on the 'steamID' column, using a left join.
+    Returns the merged DataFrame.
+    '''
     for dir in os.listdir(loc):
         if dir.endswith(".parquet"):
             labels = pd.read_parquet(os.path.join(loc, dir))
@@ -136,7 +222,21 @@ def bool_to_int(data):
 
 
 def convert_clockTime(df):
+    '''
+    Converts the 'clockTime' column of the given DataFrame to a numerical value in seconds.
 
+    The 'clockTime' column is expected to contain strings in the format 'MM:SS', where MM is the minute
+    (00-59) and SS is the second (00-59). Missing values are replaced with '0:00'. The function
+    converts each string to a numerical value equal to the number of seconds. For example, '9:30' 
+    is converted to 570 (9*60 + 30).
+
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to process. It must contain a 'clockTime' column.
+
+    Returns:
+    pandas.DataFrame: The processed DataFrame, with the 'clockTime' column replaced by the
+    corresponding numerical values.
+    '''
     df['clockTime'].fillna('0:00', inplace=True)
     df['clockTime'] = df['clockTime'].apply(
         lambda x: int(x.split(':')[0]) * 60 + int(x.split(':')[1]))
@@ -148,7 +248,20 @@ def convert_clockTime(df):
 
 
 def preprocessing(df):
+    '''
+    Preprocesses a pandas DataFrame for machine learning.
 
+    Parameters:
+    -----------
+    df : pandas DataFrame
+        The input DataFrame to preprocess.
+
+    Returns:
+    --------
+    processed_df : pandas DataFrame
+        The preprocessed DataFrame, with numerical and categorical features transformed
+        and the 'label' column processed separately.
+    '''
     # Reformat clockTime column
     for col in df.columns:
         if col == 'clockTime':
@@ -216,7 +329,20 @@ def preprocessing(df):
 
 
 def aggregation(match_files):
+    '''
+    Aggregate data from multiple CSV files into a single DataFrame.
 
+    Parameters:
+    -----------
+    match_files : list of str
+        List of file paths to CSV files containing data to be aggregated.
+
+    Returns:
+    --------
+    merged_data : pandas.DataFrame
+        DataFrame containing the aggregated data from all input files.
+        The rows are sorted by the 'tick' column and the index is reset.
+    '''
     merged_data = pd.DataFrame()
 
     for file in match_files:
@@ -234,6 +360,15 @@ def aggregation(match_files):
 
 
 def main():
+    '''
+    This function reads configuration from a config file, processes data from CSV files, cleans the features, labels the data, performs preprocessing, and saves the processed data to a directory. It loops through all the directories in the CSV directory and combines the CSV files in each directory, excluding certain files. It then performs the necessary data processing steps and saves the processed data to the processed data directory.
+
+    Args:
+        None
+
+    Returns:
+        None
+    '''
     config = configparser.ConfigParser()
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)

@@ -7,6 +7,19 @@ import configparser
 
 
 def get_hub_details(api_key, hub_id):
+    '''
+    Retrieves details about a Faceit hub using the Faceit Open Data API.
+
+    Parameters:
+    api_key (str): A valid Faceit API key.
+    hub_id (str): The ID of the hub to retrieve details for.
+
+    Returns:
+    dict: A dictionary containing details about the hub, or None if the request failed.
+
+    Raises:
+    None.
+    '''
     base_url = "https://open.faceit.com/data/v4/hubs/"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -23,13 +36,34 @@ def get_hub_details(api_key, hub_id):
 
 
 def write_json_to_file(data, filename):
+    '''
+    Write a JSON-serializable object to a file.
+
+    Args:
+        data: A JSON-serializable object to write to the file.
+        filename: A string representing the path to the file to write to.
+
+    Returns:
+        None.
+    '''
     with open(filename, 'w') as file:
         json.dump(data, file, indent=2)
     print("File written: ", filename)
 
 
 if __name__ == "__main__":
+    '''
+    Main function that retrieves hub details using the Faceit Open Data API and writes the details to a JSON file.
 
+    Parameters:
+    None.
+
+    Returns:
+    None.
+
+    Raises:
+    None.
+    '''
     # Read the config file
     config = configparser.ConfigParser()
     config.read('config.ini')

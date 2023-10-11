@@ -3,6 +3,15 @@ import configparser
 
 
 def find_empty_directories(root_dir):
+    '''
+    Find empty directories in the given root directory.
+
+    Args:
+        root_dir (str): The root directory to search for empty directories.
+
+    Returns:
+        A list of empty directories found in the root directory.
+    '''
     empty_dirs = []
 
     for dirpath, dirnames, filenames in os.walk(root_dir, topdown=False):
@@ -13,6 +22,15 @@ def find_empty_directories(root_dir):
 
 
 def delete_empty_directories(empty_dirs):
+    '''
+    Deletes the empty directories specified in the input list.
+
+    Parameters:
+    empty_dirs (list of str): A list of paths to empty directories.
+
+    Returns:
+    None
+    '''
     for dir_path in empty_dirs:
         try:
             os.rmdir(dir_path)
@@ -21,8 +39,12 @@ def delete_empty_directories(empty_dirs):
             print(f"Error deleting directory {dir_path}: {e}")
 
 
-if __name__ == "__main__":
-
+def main():
+    '''
+    This function searches for empty directories in a specified directory and deletes them.
+    It reads the directory path from a configuration file named 'config.ini' located in the same directory as this script.
+    The directory path should be specified under the 'PATHS' section with the key 'csv_dir'.
+    '''
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
     config = configparser.ConfigParser()
@@ -39,3 +61,7 @@ if __name__ == "__main__":
         delete_empty_directories(empty_directories)
     else:
         print("No empty directories found.")
+
+
+if __name__ == "__main__":
+    main()
