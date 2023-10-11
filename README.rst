@@ -1,4 +1,4 @@
-# Anticheat System using Anomaly Detection
+Anticheat System using Anomaly Detection
 ============================================
 
 This is an open-source python project for showcasing Deep Learning capabilities for `Outlier Detection <https://en.wikipedia.org/wiki/Anomaly_detection>`_
