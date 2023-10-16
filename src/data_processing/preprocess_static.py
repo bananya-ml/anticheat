@@ -178,7 +178,7 @@ def clean_features(df):
     df['valid_row'] = df['playerSteamID'].notna() & df['steamID'].notna()
 
     if df['valid_row'].any():
-        print("Merging columns 'playerSteamID and steamID is not possible! Continuing without merging...")
+        print("Merging columns 'playerSteamID' and 'steamID' is not possible! Continuing without merging...")
         df.drop('valid_row', axis=1, inplace=True)
     else:
         print("Merging columns 'playerSteamID and steamID'...")
