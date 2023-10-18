@@ -69,5 +69,3 @@ if __name__ == "__main__":
 
     anomalies = dsad(X_train, y_train, X_test, y_test,
                      save_dir_src, save_dir_ser, columns)
-
-    print(anomalies['steamID'])

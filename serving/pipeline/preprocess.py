@@ -58,8 +58,16 @@ def clean_features(df):
         df.drop('playerSteamID', axis=1, inplace=True)
         df.drop('valid_row', axis=1, inplace=True)
 
-    drop_cols = ['matchID', 'matchId', 'isTrade', 'playerTradedName',
-                 'playerTradedTeam', 'playerTradedSteamID', 'playerTradedSide']
+    drop_cols = ['attackerSide', 'attackerTeam', 'assisterName', 'assisterTeam', 'assisterSide',
+                 'activeWeapon', 'ammoInMagazine', 'ammoInReserve', 'armor', 'armorDamage',
+                 'armorDamageTaken', 'assisterSteamID', 'cash', 'cashSpendThisRound',
+                 'cashSpendTotal', 'ctEqVal', 'ctTeamName', 'ctUtility', 'equipmentValue',
+                 'equipmentValueFreezetimeEnd', 'equipmentValueRoundStart', 'flashThrowerSide',
+                 'flashThrowerTeam', 'hasDefuse', 'hasHelmet', 'hp', 'hpDamage', 'hpDamageTaken',
+                 'isTrade', 'isInBombZone', 'isInBuyZone', 'matchID', 'playerSide', 'playerTeam',
+                 'playerTradedName', 'playerTradedTeam', 'playerTradedSteamID', 'playerTradedSide',
+                 'side', 'tAlivePlayers', 'tEqVal', 'tUtility', 'tTeamName', 'team', 'teamName',
+                 'throwerSide', 'throwerTeam', 'totalUtility', 'victimTeam', 'victimSide']
     df.drop(columns=drop_cols, axis=1, inplace=True)
 
     return df
@@ -133,8 +141,12 @@ def aggregation(match_files):
     merged_data = pd.DataFrame()
 
     for file in match_files:
+        if os.path.basename(file).startswith("grenades"):
+            df = pd.read_csv(file)
+            df = df.rename(columns={"throwTick": "tick"})
+        else:
+            df = pd.read_csv(file)
 
-        df = pd.read_csv(file)
         if merged_data.empty:
             merged_data = df.copy()
         else:

@@ -30,7 +30,7 @@ def main():
 
     file_paths = [os.path.join(csv_loc, file) for file in os.listdir(csv_loc)]
     file_paths = [file for file in file_paths
-                  if not os.path.basename(file).startswith(("grenades", "info", "rounds"))]
+                  if not os.path.basename(file).startswith(("bomb", "flashes", "info", "rounds"))]
 
     merged = preprocess.aggregation(file_paths)
     cleaned_data = preprocess.clean_features(merged)
