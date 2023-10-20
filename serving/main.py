@@ -23,9 +23,9 @@ def main():
     file_loc = sys.argv[1]
 
     csv_loc = parser.parser(file_loc)
-    output_dataset_dir = os.path.join("D:\\anticheat\\serving\\data", os.path.splitext(
+    output_dataset_dir = os.path.join(os.path.join(os.getcwd(), "data"), os.path.splitext(
         os.path.basename(file_loc))[0], "processed")
-    output_metadata_dir = os.path.join("D:\\anticheat\\serving\\data", os.path.splitext(
+    output_metadata_dir = os.path.join(os.path.join(os.getcwd(), "data"), os.path.splitext(
         os.path.basename(file_loc))[0], "metadata")
 
     file_paths = [os.path.join(csv_loc, file) for file in os.listdir(csv_loc)]
@@ -40,7 +40,7 @@ def main():
     anomalies = models.predictions.show_anomalies(
         data_dir=output_dataset_dir, md_dir=output_metadata_dir)
 
-    if anomalies.size == 0:
+    if not anomalies:
         print("No usage of unfair means detected!")
     else:
         for anomaly in anomalies:

@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 import configparser
 from deepod.metrics import tabular_metrics
 import os
+import torch
 import joblib
 
 
@@ -13,7 +14,7 @@ import joblib
 
 def dsad(X_train, y_train, X_test, y_test, save_path_src, save_path_ser, columns):
 
-    model = DeepSAD()
+    model = DeepSAD(device=torch.device('cpu'))
 
     model.fit(X_train, y_train)
 
