@@ -44,7 +44,8 @@ def main():
         print("No usage of unfair means detected!")
     else:
         for anomaly in anomalies:
-            print(f"{anomaly:.0f}")
+            if int(anomaly) != 0:
+                print(f"{anomaly:.0f}")
 
 
 if __name__ == "__main__":

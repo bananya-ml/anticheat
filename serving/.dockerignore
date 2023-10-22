@@ -1,0 +1,4 @@
+Dockerfile
+*.pyc
+*.pyd
+__pycache__
