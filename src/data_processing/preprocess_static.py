@@ -196,7 +196,11 @@ def clean_features(df):
                  'isTrade', 'isInBombZone', 'isInBuyZone', 'matchID', 'playerSide', 'playerTeam',
                  'playerTradedName', 'playerTradedTeam', 'playerTradedSteamID', 'playerTradedSide',
                  'side', 'tAlivePlayers', 'tEqVal', 'tUtility', 'tTeamName', 'team', 'teamName',
-                 'throwerSide', 'throwerTeam', 'totalUtility', 'victimTeam', 'victimSide']
+                 'throwerSide', 'throwerTeam', 'totalUtility', 'victimTeam', 'victimSide', 'tBuyType',
+                 'tRoundSpendMoney', 'tRoundStartEqVal', 'ctBuyType', 'ctRoundSpendMoney',
+                 'ctRoundStartEqVal', 'winningTeam', 'losingTeam', 'attackerName', 'victimViewY',
+                 'ctFreezeTimeEndEqVal', 'freezeTimeEndTick', 'name', 'spotters', 'tFreezeTimeEndEqVal',
+                 'tTeam', 'throwerSteamID']
 
     df.drop(columns=drop_cols, axis=1, inplace=True)
 
@@ -358,6 +362,9 @@ def aggregation(match_files):
         if os.path.basename(file).startswith("grenades"):
             df = pd.read_csv(file)
             df = df.rename(columns={"throwTick": "tick"})
+        elif os.path.basename(file).startswith("rounds"):
+            df = pd.read_csv(file)
+            df = df.rename(columns={'startTick': "tick"})
         else:
             df = pd.read_csv(file)
 
@@ -394,14 +401,14 @@ def main():
 
     num = 1
 
-    for dir in os.listdir(csv_dir):
+    for dir in os.listdir(csv_dir)[:1]:
         if dir.startswith("match"):
 
             csv_files = glob.glob(os.path.join(csv_dir, dir, "*.csv"))
 
             csv_files = [file for file in csv_files if not (
                 os.path.basename(file).startswith(
-                    ("bomb", "flashes", "info", "rounds"))
+                    ("bomb", "flashes", "info"))
             )]
 
             print(f"Combining files in {dir}...")
@@ -415,8 +422,10 @@ def main():
 
             print("Performing preprocessing...")
             processed_df = preprocessing(labelled_df)
-
-            save_file(processed_df, processed_dir, num)
+            lst = [col for col in processed_df.columns if col.endswith(
+                ('X', 'Y', 'Z'))]
+            print(lst)
+            # save_file(processed_df, processed_dir, num)
             # save_csv(processed_df, processed_dir, num)
 
             print("\n")

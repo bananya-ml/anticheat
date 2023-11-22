@@ -45,7 +45,7 @@ def convert_clockTime(df):
 
 
 def clean_features(df):
-    # Check if 'playerSteamID' and 'steamID' columns have conflicting values
+
     df['valid_row'] = df['playerSteamID'].notna() & df['steamID'].notna()
 
     if df['valid_row'].any():
@@ -67,40 +67,83 @@ def clean_features(df):
                  'isTrade', 'isInBombZone', 'isInBuyZone', 'matchID', 'playerSide', 'playerTeam',
                  'playerTradedName', 'playerTradedTeam', 'playerTradedSteamID', 'playerTradedSide',
                  'side', 'tAlivePlayers', 'tEqVal', 'tUtility', 'tTeamName', 'team', 'teamName',
-                 'throwerSide', 'throwerTeam', 'totalUtility', 'victimTeam', 'victimSide']
+                 'throwerSide', 'throwerTeam', 'totalUtility', 'victimTeam', 'victimSide', 'tBuyType',
+                 'tRoundSpendMoney', 'tRoundStartEqVal', 'ctBuyType', 'ctRoundSpendMoney',
+                 'ctRoundStartEqVal', 'winningTeam', 'losingTeam', 'attackerName', 'victimViewY',
+                 'ctFreezeTimeEndEqVal', 'freezeTimeEndTick', 'name', 'spotters', 'tFreezeTimeEndEqVal',
+                 'tTeam', 'throwerSteamID', 'hasBomb', 'isBlinded', 'roundNum', 'isWalking', 'noScope',
+                 'isScoped', 'endOfficialTick', 'victimZ', 'isWallbang', 'victimBlinded', 'endTScore',
+                 'throwerName', 'attackerViewX', 'victimSteamID', 'isPlanting', 'attackerBlinded',
+                 'victimViewX', 'endCTScore', 'isDucking', 'victimY', 'isFriendlyFire',
+                 'distance', 'victimX', 'isDuckingInProgress', 'isDefusing', 'isTeamkill', 'thruSmoke',
+                 'isFirstKill', 'isReloading', 'isUnDuckingInProgress', 'isUnknown']
     df.drop(columns=drop_cols, axis=1, inplace=True)
+
+    return df
+
+
+def feature_engineering(df):
+
+    coord_cols = []
+    changes_dict = {}
+    identifiers = []
+
+    for col in df.columns:
+        if col.endswith(('x', 'y', 'z', 'X', 'Y', 'Z')):
+            coord_cols.append(col)
+
+    for col in coord_cols:
+        identifier = col[:-1]
+        if len(identifier) == 0:
+            continue
+        else:
+            identifiers.append(identifier)
+
+    identifiers = set(identifiers)
+
+    for identifier in identifiers:
+        identifier_columns = [column for column in coord_cols if column.startswith(
+            identifier) and column[len(identifier)] in ['X', 'Y', 'Z']]
+        changes_dict[identifier] = identifier_columns
+
+    for new_col, old_cols in changes_dict.items():
+        df[new_col] = 0
+        for i in range(len(old_cols)):
+            df[new_col] += df[old_cols[i]] * 10**(-(i+1))
+
+        df.drop(columns=old_cols, inplace=True)
+
+    if 'x' in df.columns and 'y' in df.columns and 'z' in df.columns:
+        df['pos'] = df['x'] * 10**(-1) + df['y'] * \
+            10**(-2) + df['z'] * 10**(-3)
+        df.drop(['x', 'y', 'z'], axis=1, inplace=True)
 
     return df
 
 
 def preprocessing(df):
 
-    # Reformat clockTime column
     for col in df.columns:
         if col == 'clockTime':
             df = convert_clockTime(df)
 
-    # Define numerical and categorical features
+    df = feature_engineering(df)
+    print(df.shape)
     numerical_features = [
         col for col in df.columns if df[col].dtype in ['int64', 'float64']]
     categorical_features = [
         col for col in df.columns if df[col].dtype == 'object']
 
-    # Clean categorical features
     for cols in categorical_features:
         unique_column_dtypes = df[cols].apply(type).unique()
         if len(unique_column_dtypes) > 1 and bool in unique_column_dtypes:
             df[cols] = df[cols].fillna('False').astype(bool)
 
-    # Define boolean features
     boolean_features = [
         col for col in df.columns if df[col].dtype == 'bool']
 
-    # Update categorical features
     categorical_features = [
         col for col in categorical_features if col not in boolean_features]
-
-    # Define transformers
 
     numerical_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
@@ -127,10 +170,8 @@ def preprocessing(df):
     processed_df = pd.DataFrame(processed_data,
                                 columns=numerical_features + categorical_features + boolean_features)
 
-    # Convert columns to float type
     processed_df = processed_df.astype(float)
 
-    # Define the a custom scaler for the steamID column
     scaler = inverse_scaler(df)
 
     return processed_df, scaler
@@ -161,23 +202,17 @@ def aggregation(match_files):
 
 def save_file(df, output_dir):
 
-    # Create the directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    # Define the output file path
     output_file = os.path.join(output_dir, "data.parquet")
 
-    # Save the merged dataframe to the corresponding directory
     df.to_parquet(output_file, index=False)
 
 
 def save_metadata(scaler, output_dir):
 
-    # Create the directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    # Define the output file path
     output_file = os.path.join(output_dir, "scaler.pkl")
 
-    # Save the merged dataframe to the corresponding directory
     joblib.dump(scaler, output_file)
