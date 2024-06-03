@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-version https://git-lfs.github.com/spec/v1
-oid sha256:3b8cde6f7df1a4c3c740175dd1b11152a73e11d1caec0fe0745bd28621d6639b
-size 4137
-=======
 # Script to extract match and player IDs from match_details.json stored in match_ids.txt and player_ids.csv
 
 import os
@@ -139,4 +134,3 @@ def main():
 
 if __name__ == "__main__":
     main()
->>>>>>> e5036ff1c300019501499a9ba150bdee79f644b8
