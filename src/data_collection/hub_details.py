@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+version https://git-lfs.github.com/spec/v1
+oid sha256:760c01d1df8630f0fde650f84de51090ca0b2d230c5b851803954b3ad228ed2b
+size 2239
+=======
 # Script to retrive hub details from manually retrieved hub IDs stored in hub_details.json
 
 import requests
@@ -82,3 +87,4 @@ if __name__ == "__main__":
 
         json_filename = os.path.join(output_path, 'hub_details.json')
         write_json_to_file(hub_details, json_filename)
+>>>>>>> e5036ff1c300019501499a9ba150bdee79f644b8
