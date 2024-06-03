@@ -4,6 +4,7 @@
 *.pkl
 *.pyc
 *.db
+*.ini
 
 anticheat_env
 .vscode
