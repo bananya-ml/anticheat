@@ -1,12 +1,3 @@
-*.csv
-*.parquet
-*.json
-*.pkl
-*.pyc
-*.db
-*.ini
-
-anticheat_env
-.vscode
-.python-version
-__pycache__
+version https://git-lfs.github.com/spec/v1
+oid sha256:52bc113ec5c0343477bc539285c60e54f58866e0e98138003ae85a2b02cf9ee2
+size 96
